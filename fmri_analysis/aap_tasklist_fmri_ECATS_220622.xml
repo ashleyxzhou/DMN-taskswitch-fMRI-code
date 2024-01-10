@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<aap>
+    <tasklist>
+        <initialisation>
+            <module><name>aamod_checkparameters</name></module>
+            <module><name>aamod_evaluatesubjectnames</name></module>
+            <module><name>aamod_study_init</name></module>
+            <module><name>aamod_newsubj_init</name></module>
+        </initialisation>
+        <main>
+            <module><name>aamod_autoidentifyseries_timtrio</name></module>
+            <module><name>aamod_get_dicom_structural</name></module>
+            <module><name>aamod_get_dicom_epi</name></module>
+            <module><name>aamod_get_dicom_fieldmap</name></module>
+            <module><name>aamod_convert_structural</name></module>
+            <module><name>aamod_convert_epis</name></module>
+            <module><name>aamod_convert_fieldmaps</name></module>
+            <module><name>aamod_tsdiffana</name></module>			
+            <module><name>aamod_fieldmap2VDM</name></module>
+            <module><name>aamod_realignunwarp</name></module>
+            <!--            
+            <module><name>aamod_realign</name></module>
+                        -->
+            <module><name>aamod_tsdiffana</name></module>
+            <module><name>aamod_slicetiming</name></module>
+            <module><name>aamod_tsdiffana</name></module>
+            <module><name>aamod_coreg_extended_1</name></module>
+            <module><name>aamod_segment8</name></module>
+            <module><name>aamod_coreg_extended_2epi</name></module>
+            <module><name>aamod_coreg_extended_2meanepi</name></module>			
+            <module><name>aamod_norm_write</name></module>
+            <module><name>aamod_norm_write_meanepi</name></module>
+            <!--
+            <module><name>aamod_smooth</name></module>
+            -->
+            
+            <module>
+                <branch>
+                    <analysisid_suffix>smoothed_GLM</analysisid_suffix>
+                    <module><name>aamod_smooth</name></module>
+                    <module>
+                        <branch>
+                            <analysisid_suffix>context_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>novelty_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>side_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>answer_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                        </branch>
+                    </module>
+                </branch>
+                
+                
+                <branch>
+                    <analysisid_suffix>unsmoothed_GLM</analysisid_suffix>
+                    <module>
+                        <branch>
+                            <analysisid_suffix>context_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                            
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>novelty_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>side_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>answer_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>task_type</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                                <branch>
+                                    
+                                    <module><name>aamod_decoding4_az</name></module>
+                                </branch>
+                            </module>
+                                
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>switch_side_conditions</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>switch_side_conditions_delta</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                            <module><name>aamod_decoding4_az</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>switch_to_task_type</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>switch_from_task_type</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                        </branch>
+                        <branch>
+                            <analysisid_suffix>switch_task_pair</analysisid_suffix>
+                            <module><name>aamod_firstlevel_model</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_contrasts</name></module>
+                            <module><name>aamod_firstlevel_threshold</name></module>
+                        </branch>
+
+                    </module>
+                </branch>
+            </module>
+            
+        </main>
+    </tasklist>
+</aap>
