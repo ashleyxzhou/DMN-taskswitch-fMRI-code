@@ -20,7 +20,7 @@ ax=nan(6,1);
 load('Z:\Duncan-lab\users\az01\task_switch\DataAnalysis\aa5_analysis_220622unsmoothed_GLMside_conditions\others_minus_task_stay211022.mat');
 %load('delta_others_minus_task_stay241122.mat');
 %data is 5 conditions (wd,bd,rest,restart,ex-rest against ts) x 6 rois (MD,
-%visual,somatosensory, core, dmpfc, mtl) x 35 subjects 
+%visual,somatosensory, core, dmpfc, mtl) x 35 subjects
 
 %ANOVA of core and mtl rois
 %first, average the rest and extended rest
@@ -37,79 +37,91 @@ F=tbl.F(7);x=tbl.DF(7);y=tbl.DF(7+1); % interaction
 BF10=rmANOVAbf_FB23(F,x,y);
 disp(['BF for interaction of condition/ROIs: ' num2str(BF10)]);
 
-mean_data=mean(data,3);
-mean_data = mean_data([1,2,4,3,5],4);
-rest_ext_rest = [squeeze(data(3,4,:));squeeze(data(5,4,:))];
-mean_data(4) = mean(rest_ext_rest);
-
-[~,~,CI,~] = ttest(rest_ext_rest);
-rest_error= abs(CI-mean_data(4));
-mean_data = mean_data(1:4);
-% csvwrite('mtl_unv.csv',mean_data);
-color_bar = {[1 157/255 27/255],[251/255 187/255 16/255],[233/255 77/255 54/255],[103/255 192/255 77/255],[190/255 43/255 187/255],[0 167/255 136/255]};
-colornum=1; 
-roi=4;%only core DMN
-ROI_name = split(dataspecs.rois{4},'.');
-
-
-ax(column,index)=subplot('position',pos{column,index});
-bar(mean_data,'FaceColor',color_bar{colornum},'EdgeColor','none');
-box off;
-colornum=colornum+1;
-conditions_names = regexprep(dataspecs.contrasts([1,2,4,3]),'_',' ');
-
-set(gca, 'xticklabel',{'within-domain','between-domain','restart','rest'},'FontSize',13);
-ylabel('BOLD Response','FontSize',18);
-%ylim([0 1.2]);
-%     xtickangle(30);
-title('Core DMN response for regular trials, compared to task-stay','interpreter','none','FontSize',18);
-%legend({'Core DMN');
-%mean_data=mean(data,3);
-
-%plot error bar
-for cond = 1:5
-    [~,p_ts,CI,stats] = ttest(data(cond,roi,:));
-    mean_data2=mean(data,3);
-    abs_value = abs(CI-mean_data2(cond,roi));
-    error(1,cond)=abs_value(:,:,1);
-    error(2,cond)=abs_value(:,:,2);
+for roi=[4,6]
+    mean_data=mean(data,3);
+    mean_data = mean_data([1,2,4,3,5],roi);
+    rest_ext_rest = squeeze(data(6,4,:));
+    mean_data(4) = mean(rest_ext_rest);
     
-    if cond ==1
-        p_values_ts.(ROI_name{1})=p_ts;
-        t_values_ts.(ROI_name{1})=stats.tstat;
+    [~,~,CI,~] = ttest(rest_ext_rest);
+    rest_error= abs(CI-mean_data(4));
+    mean_data = mean_data(1:4);
+    
+    if roi==4
+        csvwrite('mtl_unv.csv',mean_data);
     else
-        p_values_ts.(ROI_name{1})=[p_values_ts.(ROI_name{1}) p_ts];
-        t_values_ts.(ROI_name{1})=[t_values_ts.(ROI_name{1}) stats.tstat];
+        csvwrite('core_dmn_unv.csv',mean_data);
     end
-    %do pair-wise t-tests between each condition and make a tbl
-    for cond2=1:5
-        if cond>=cond2
-            continue;
+    color_bar = {[1 157/255 27/255],[251/255 187/255 16/255],[233/255 77/255 54/255],[103/255 192/255 77/255],[190/255 43/255 187/255],[0 167/255 136/255]};
+    colornum=1;
+    
+    ROI_name = split(dataspecs.rois{roi},'.');
+    
+    
+    ax(column,index)=subplot('position',pos{column,index});
+    bar(mean_data,'FaceColor',color_bar{colornum},'EdgeColor','none');
+    box off;
+    colornum=colornum+1;
+    conditions_names = regexprep(dataspecs.contrasts([1,2,4,3]),'_',' ');
+    
+    set(gca, 'xticklabel',{'within-domain','between-domain','restart','rest'},'FontSize',13);
+    ylabel('BOLD Response','FontSize',18);
+    %ylim([0 1.2]);
+    %     xtickangle(30);
+    title('Core DMN response for regular trials, compared to task-stay','interpreter','none','FontSize',18);
+    %legend({'Core DMN');
+    %mean_data=mean(data,3);
+    
+    %plot error bar
+    for cond = 1:5
+        [~,p_ts,CI,stats] = ttest(data(cond,roi,:));
+        mean_data2=mean(data,3);
+        abs_value = abs(CI-mean_data2(cond,roi));
+        error(1,cond)=abs_value(:,:,1);
+        error(2,cond)=abs_value(:,:,2);
+        
+        if cond ==1
+            p_values_ts.(ROI_name{1})=p_ts;
+            t_values_ts.(ROI_name{1})=stats.tstat;
+        else
+            p_values_ts.(ROI_name{1})=[p_values_ts.(ROI_name{1}) p_ts];
+            t_values_ts.(ROI_name{1})=[t_values_ts.(ROI_name{1}) stats.tstat];
         end
-        [~,p,~,stats]=ttest(data(cond,roi,:),data(cond2,roi,:));
-        first_cond =  split(dataspecs.contrasts{cond},'_');
-        first_cond =first_cond{1};
-        second_cond =  split(dataspecs.contrasts{cond2},'_');
-        second_cond=second_cond{1};
-        pair_ttest.([first_cond '_' second_cond])=[p stats.tstat stats.df];
+        %do pair-wise t-tests between each condition and make a tbl
+        for cond2=1:5
+            if cond>=cond2
+                continue;
+            end
+            [~,p,~,stats]=ttest(data(cond,roi,:),data(cond2,roi,:));
+            first_cond =  split(dataspecs.contrasts{cond},'_');
+            first_cond =first_cond{1};
+            second_cond =  split(dataspecs.contrasts{cond2},'_');
+            second_cond=second_cond{1};
+            pair_ttest.([first_cond '_' second_cond])=[p stats.tstat stats.df];
+            
+        end
+        p_values.(ROI_name{1})=pair_ttest;
+    end
+    hold on
+    e=errorbar(1:4,mean_data,[error(1,[1,2,4]) rest_error(1)],[error(2,[1,2,4]) rest_error(1)]);
+    e.LineStyle='none';
+    
+    if roi ==4
+        csvwrite('mtl_unv_error_bar.csv',[error(1,[1,2,4]) rest_error(1)]);
+    else
+        csvwrite('core_dmn_unv_error_bar.csv',[error(1,[1,2,4]) rest_error(1)]);
         
     end
-    p_values.(ROI_name{1})=pair_ttest;
+    
+    all_switch_avg = mean(squeeze(data([1,2,4],4,:)));
+    [~,p,~,vs_ts_tstats] = ttest(all_switch_avg);
+    %Bayesfactor_switch_vs_ts = t1smpbf(vs_ts_tstats.tstat,length(all_switch_avg));
+    rest_avg = mean([squeeze(data(3,4,:)) squeeze(data(5,4,:))],2)';
+    [~,p,~,vs_rest_tstats] = ttest(all_switch_avg-rest_avg);
+    %Bayesfactor_switch_vs_rest = t1smpbf(vs_rest_tstats.tstat,length(all_switch_avg));
+    simple_mixed_anova(squeeze(data([1,2,4],1,:))',[],{'Conditions'},{});
+    
 end
-hold on
-e=errorbar(1:4,mean_data,[error(1,[1,2,4]) rest_error(1)],[error(2,[1,2,4]) rest_error(1)]);
-e.LineStyle='none';
-
-%csvwrite('mtl_unv_error_bar.csv',[error(1,[1,2,4]) rest_error(1)]);
-
-all_switch_avg = mean(squeeze(data([1,2,4],4,:)));
-[~,p,~,vs_ts_tstats] = ttest(all_switch_avg);
-%Bayesfactor_switch_vs_ts = t1smpbf(vs_ts_tstats.tstat,length(all_switch_avg));
-rest_avg = mean([squeeze(data(3,4,:)) squeeze(data(5,4,:))],2)';
-[~,p,~,vs_rest_tstats] = ttest(all_switch_avg-rest_avg);
-%Bayesfactor_switch_vs_rest = t1smpbf(vs_rest_tstats.tstat,length(all_switch_avg));
-simple_mixed_anova(squeeze(data([1,2,4],1,:))',[],{'Conditions'},{});
-
 
 behav_data.RT_regular=[];
 behav_data.RT_cswitch=[];
@@ -158,13 +170,13 @@ for sub = subs
     second_half=[];
     addpath Z:\Duncan-lab\users\az01\task_switch\scripts;
     for run = 1:4
-
+        
         load(['exp_pilot_' num2str(sub{1}) '_run_' num2str(run) '.mat'],'result');
-      
+        
         %if sub{1}==5
-            %slowoutlier=5; %pilot subject has results file in a different format
+        %slowoutlier=5; %pilot subject has results file in a different format
         %else
-            ok=~cellfun(@isempty,{result.rt}); rts=[result(ok).rt]-[result(ok).stim_onset]; slowoutlier=mean(rts(~isnan(rts)))+3*std(rts(~isnan(rts)));
+        ok=~cellfun(@isempty,{result.rt}); rts=[result(ok).rt]-[result(ok).stim_onset]; slowoutlier=mean(rts(~isnan(rts)))+3*std(rts(~isnan(rts)));
         %end
         
         for trial=1:length(result)
@@ -188,7 +200,7 @@ for sub = subs
                     else
                         cond='rest';
                     end
-
+                    
                 elseif strcmp(prev_task_type,'r')
                     cond='restart';
                 elseif strcmp(task_type,prev_task_type)
@@ -243,10 +255,10 @@ for sub = subs
             
         end % next trial
     end % next run
-
+    
     first_half_sub_avg_rt(subnum)=mean(first_half);
     second_half_sub_avg_rt(subnum)=mean(second_half);
-     
+    
     for responsetype={'regular','cswitch'}
         for measure={'RT','accuracy'}
             
@@ -274,7 +286,7 @@ for sub = subs
             sub_mean.([responsetype{1} '_' measure{1}])(subnum) = mean([ts wd bd restart rest extended_rest ]);
             behav_data.([measure{1} '_' responsetype{1}]) = [behav_data.([measure{1} '_' responsetype{1}]);sub_means];
             
-         end % next measure
+        end % next measure
     end % next response type
     
     %%% memory tasks...
@@ -310,7 +322,7 @@ for sub = subs
     DP(4)=mean(dprime(strcmp('restart',[result.condition])));
     DP(5)=mean([dprime(strcmp('rest',[result.condition]))  dprime(strcmp('extended-rest',[result.condition]))]);
     dprime_allsubs(subnum,:)=DP;
-
+    
     SE(1)=mean(sorterror(strcmp('task-stay',[result.condition])));
     SE(2)=mean(sorterror(strcmp('within-domain',[result.condition])));
     SE(3)=mean(sorterror(strcmp('between-domain',[result.condition])));
@@ -330,12 +342,19 @@ means.cswitch_RT = mean(allsub_context_rt);
 column=1;
 for responsetype={'regular','cswitch'}
     measure={'RT'};
-
+    
     sub_data = behav_data.([measure{1} '_' responsetype{1}]);
-    sub_data(:,5)=mean(sub_data(:,5:6),2);
-    sub_means = mean(sub_data);
     
     if strcmp(responsetype{1},'cswitch')
+        sub_data = sub_data(3:end,:); %for context switch trials 3 participants are omitted
+        sub_data(:,5)=mean(sub_data(3:end,5:6),2);
+        [h,p,ci,tstat]=ttest(sub_data(:,1),mean(sub_data(:,2:4),2)) %t-test of task repeats against tas switches averaged
+        simple_mixed_anova(sub_data(:,2:4),[],{'Conditions'}); %anova between task switch conditions
+        BF_anova_between_ts = rmANOVAbf_FB23(0.0073691,2,62);
+        
+        [h,p,ci,tstat]=ttest(mean(sub_data(:,5:6),2),mean(sub_data(:,1:4),2)); %ttest between tasks and rest
+        bfFromT(-5.5456,31);
+        
         adj=sub_data-repmat(nanmean(sub_data,2),1,6)+nanmean(sub_data(:));
         [~,pvalue,CI,stats_rt_cs] = ttest(adj)
         error = abs(CI-repmat(nanmean(adj,1),2,1));
@@ -356,12 +375,13 @@ for responsetype={'regular','cswitch'}
         csvwrite('rt_cs_error.csv',error(1,1:5));
         
     else
+        sub_data(:,5)=mean(sub_data(:,5:6),2);
         ax(column,index)=subplot('position',pos{column,index});
         temp=sub_data(:,1:5)-repmat(sub_data(:,1),1,5);
         [H,p,CI,stats_rt_reg]=ttest(temp);
         [h,pp,cc,statswdbd]=ttest(temp(:,3),temp(:,2)); %wd bd diff
- 
-        csvwrite('rt_reg.csv',sub_means_mts(2:5));
+        
+        csvwrite('rt_reg.csv',temp(2:5));
         csvwrite('rt_reg_error.csv',error(1,2:5));
     end
     % next measure
@@ -434,7 +454,7 @@ for num = 1:2
                 else
                     sub_avg_array{i}.(switch_types{cond}) = sub_avg_array{i}.(switch_types{cond})+networks;
                 end
-
+                
                 anova_matrix(subjects,:,cond) = networks;
                 
             end
@@ -446,12 +466,12 @@ for num = 1:2
         end
         
     end
-
+    
     all_cond_networks_avg=mean(networks_avg,2);
     [sorted,net_index]=sort(all_cond_networks_avg,1,'descend');
-
+    
     network_to_plot = net_index(1:3);
-
+    
     ax(column,index)=subplot('position',pos2{column,index});
     column=num+1;
     
