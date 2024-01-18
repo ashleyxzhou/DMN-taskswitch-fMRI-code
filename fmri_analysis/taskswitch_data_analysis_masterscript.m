@@ -77,13 +77,14 @@ for num = 1:2
     decode_results.(conditions{num}).error=abs(CI-repmat(mean(all_cond_networks_avg(:,index),1),2,1));
     
     %first find significant parcellations
+    network_uncorrected_sig = index(H==1);
     network_to_plot = index(fdr_bh(p)==1);
     
     %average all the significant parcellations
     comb_sig = squeeze(mean(anova_matrix(:,network_to_plot,:),2));
     [H,p,CI,~] = ttest(comb_sig);
     [h,p,ci,tstat]=ttest(mean(comb_sig(:,[2,3,5]),2),comb_sig(:,1)); %ttest between sig combined net's task transitions and ts
-    [h,p,ci,tstat]=ttest(mean(comb_sig(:,[2,3,5]),2),mean(comb_sig(:,[4,6]),2));
+    [h,p,ci,tstat]=ttest(mean(comb_sig(:,[1,2,3,5]),2),mean(comb_sig(:,[4,6]),2)); %ttest between all tasks and rest
     tbl=simple_mixed_anova(comb_sig(:,[2,3,5]),[],{'Conditions'});
     decode_results.(conditions{num}).combined = mean(comb_sig);
     decode_results.(conditions{num}).combined_error = abs(CI-repmat(mean(comb_sig),2,1));
