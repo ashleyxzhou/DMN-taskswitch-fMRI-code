@@ -9,18 +9,21 @@ Reaction times for regular trials, figure 2
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-data = pd.read_csv('figure_values/alltaskrt_reg.csv', header=None)
+data = pd.read_csv('alltaskrt_reg.csv', header=None)
 # Sample data
 categories = ['Task-repeat','Within-domain', 'Between-domain', 'Restart','Rest']
 means = data.values[0]
 
-errordata =pd.read_csv('figure_values/alltaskrt_reg_error.csv', header=None)
+errordata =pd.read_csv('alltaskrt_reg_error.csv', header=None)
 errors = errordata.values[0]
 
 errordata =pd.read_csv('reg_rt_error.csv', header=None)
 errors = errordata.values[0]
 errors = np.insert(errors, 0, 0)
-errors=np.insert(errors,4,0)
+#errors=np.insert(errors,4,0)
+
+allsubs=pd.read_csv('allsubs_rt.csv', header=None)
+allsubs= allsubs.values
 
 # Custom bar colors for each bar
 bar_colors = ['b', 'g', 'r']
@@ -30,12 +33,19 @@ bar_colors = ["#7db0ea","#447fdd", "#447fdd", "#447fdd"]
 # Create the bar plot with error bars and custom colors
 plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.7, edgecolor='black')
 
+
+for i in range(5):
+    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.6,zorder=2)
+    #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
+    
+plt.errorbar(categories, means, yerr=errors, fmt='none',ecolor='black',capsize=5,capthick=1,zorder=3)
+
 #significant_bars = [0, 1, 2]  # Assuming bars 2 and 3 are significant
 #for i in significant_bars:
 #    plt.text(i, means[i] + errors[i]+0.02, '*', ha='center', va='bottom', fontsize=12, color='black')
     
 # Add labels and title
-plt.ylim([1,1.4])
+plt.ylim([0.5,2.5])
 #plt.xlabel('Condition')
 plt.ylabel('Mean RT for Regular Trials(s)')
 #plt.title('Reaction time for regular trials, compared to task-stay', fontsize=12)
@@ -50,7 +60,7 @@ plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 plt.axis()
 # Set the highest possible resolution (e.g., 300 DPI)
-dpi = 300
+dpi = 600
 
 bar_index1 = 0  # Index of the first bar to span
 bar_index2 = 4  # Index of the second bar to span

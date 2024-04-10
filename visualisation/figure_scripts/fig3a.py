@@ -9,45 +9,43 @@ Context switch trials reaction time, figure3
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-data = pd.read_csv('figure_values/rt_cs.csv', header=None)
+data = pd.read_csv('rt_cs.csv', header=None)
 # Sample data
 categories = ['Task-repeat','Within-domain', 'Between-domain', 'Restart','Rest']
 means = data.values[0]
 
-errordata =pd.read_csv('figure_values/rt_cs_error.csv', header=None)
+errordata =pd.read_csv('rt_cs_error.csv', header=None)
 errors = errordata.values[0]
 
-# Custom bar colors for each bar
-bar_colors = ['b', 'g', 'r']
-bar_colors = ["#7db0ea", "#447fdd", "#225bb2"]
+allsubs=pd.read_csv('allsubs_rt_cs.csv', header=None)
+allsubs= allsubs.values
 
+# Custom bar colors for each bar
 bar_colors = ["#969bc7","#6b6ca3","#6b6ca3","#6b6ca3", "#434475"]
 
 # Create the bar plot with error bars and custom colors
-plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.7, edgecolor='black')
+plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.7, edgecolor='black',zorder=1)
 
+#scatter individual points
+for i in range(5):
+    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.6,zorder=2)
+    #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
+    
+plt.errorbar(categories, means, yerr=errors, fmt='none',ecolor='black',capsize=5,capthick=1,zorder=3)
 # Add labels and title
-plt.ylim([0.75,0.9])
+plt.ylim([0.5,1.0])
 #plt.xlabel('Condition')
 plt.ylabel('Mean RT of Context Switch Trials(s)')
 #plt.title('Reaction time to context switch trials (jungle detection)', fontsize=12)
 plt.xticks(fontsize=8)
-# Add a legend in the top left corner
-#plt.legend(['Core DMN'], loc='upper left', fontsize='small')
-
-# Make the style fit for a science paper publication
-#plt.grid(axis='y', linestyle='--', alpha=0.5)
 plt.tight_layout()
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 plt.axis()
 # Set the highest possible resolution (e.g., 300 DPI)
-dpi = 300
+dpi = 600
 
 fig1 = plt.gcf()
 
-# Export the figure to a .jpg format with the specified DPI
-#plt.savefig('b_rt_reg_high_res.jpg', dpi=dpi)
-#fig1.savefig('revised_rt_cs_high_res.jpg', dpi=dpi)
-
 # Show the plot (optional)
+plt.show()

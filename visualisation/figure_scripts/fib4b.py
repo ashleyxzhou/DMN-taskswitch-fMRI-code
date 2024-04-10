@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import json
 import numpy as np
 
-with open('../Downloads/yeoDecodingResults.json', 'r') as json_file:
+with open('yeoDecodingResults.json', 'r') as json_file:
     data = json.load(json_file)
     
 categories = ['Task-repeat','Within-\ndomain', 'Between-\ndomain', 'Restart', 'Rest']
@@ -64,3 +64,4 @@ dpi = 600
 fig1=plt.gcf()
 fig1.set_size_inches(6,5) 
 fig1.savefig('combo_context.jpg', dpi=dpi)
+plt.show()
