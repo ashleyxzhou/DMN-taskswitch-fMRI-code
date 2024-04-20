@@ -25,6 +25,9 @@ errors = np.insert(errors, 0, 0)
 allsubs=pd.read_csv('allsubs_rt.csv', header=None)
 allsubs= allsubs.values
 
+#remove between subject variance
+allsubs=allsubs.T - [np.nanmean(allsubs, axis=1)]*5 + np.ones((5,35))*np.nanmean(allsubs)
+allsubs=allsubs.T
 # Custom bar colors for each bar
 bar_colors = ['b', 'g', 'r']
 bar_colors = ["#7db0ea", "#447fdd", "#225bb2"]
@@ -35,7 +38,7 @@ plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.7, 
 
 
 for i in range(5):
-    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.6,zorder=2)
+    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',s=15,alpha=0.3,zorder=2)
     #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
     
 plt.errorbar(categories, means, yerr=errors, fmt='none',ecolor='black',capsize=5,capthick=1,zorder=3)
@@ -45,9 +48,9 @@ plt.errorbar(categories, means, yerr=errors, fmt='none',ecolor='black',capsize=5
 #    plt.text(i, means[i] + errors[i]+0.02, '*', ha='center', va='bottom', fontsize=12, color='black')
     
 # Add labels and title
-plt.ylim([0.5,2.5])
+plt.ylim([0.75,1.5])
 #plt.xlabel('Condition')
-plt.ylabel('Mean RT for Regular Trials(s)')
+plt.ylabel('Mean RT for Regular Trials (s)')
 #plt.title('Reaction time for regular trials, compared to task-stay', fontsize=12)
 plt.xticks(fontsize=8)
 # Add a legend in the top left corner

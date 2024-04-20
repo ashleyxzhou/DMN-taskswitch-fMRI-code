@@ -30,7 +30,24 @@ reste=np.mean(errors[[4,5]])
 errors_toplot=errors[0:5]
 errors_toplot[4]=reste.T
 
-plt.bar(np.arange(5),toplot, label='nov_co',yerr=errors_toplot, capsize=2, color =colorbar, alpha=0.7, edgecolor='black')
+allsubs=data['Novelty']['all']
+temp=np.array(allsubs)
+allsubs=temp.reshape(-1,6)
+#allsubs=temp_mat.tolist()
+allsubs.tolist()
+
+#remove between subject variance
+allsubs=allsubs.T - [np.nanmean(allsubs, axis=1)]*6 + np.ones((6,35))*np.nanmean(allsubs)
+allsubs=allsubs.T
+
+plt.bar(np.arange(5),toplot, label='nov_co',yerr=errors_toplot, capsize=2, color =colorbar, alpha=0.8, edgecolor='black')
+
+for i in range(5):
+    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.3,zorder=2)
+    #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
+    
+plt.errorbar(categories, toplot, yerr=errors_toplot, fmt='none',ecolor='black',capsize=5,capthick=1,zorder=3)
+
 
 bar_names =['Visual-C.',
 'Visual-Peripheral',
@@ -59,7 +76,7 @@ plt.ylabel("Decoding accuracy for novelty (d')",fontsize=12)
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 plt.tight_layout()
-
+plt.ylim([-1.5,1.5])
 
 
 dpi = 600

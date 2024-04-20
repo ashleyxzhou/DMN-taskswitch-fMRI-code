@@ -16,7 +16,20 @@ means = data.values
 errordata =pd.read_csv('context_mtl_core_error.csv', header=None)
 errors = errordata.values
 
-width = 0.35
+allsubs=pd.read_csv('allsubs_mtl_core_context_decoding.csv', header=None)
+allsubs=allsubs.values
+
+allmtl=allsubs[:,0:6]
+#remove between subject variance
+allmtl=allmtl.T - [np.nanmean(allmtl, axis=1)]*6 + np.ones((6,35))*np.nanmean(allmtl)
+allmtl=allmtl.T
+
+allcore=allsubs[:,6:12]
+#remove between subject variance
+allcore=allcore.T - [np.nanmean(allcore, axis=1)]*6 + np.ones((6,35))*np.nanmean(allcore)
+allcore=allcore.T
+
+width = 0.3
 
 means = means[:,[0,1,2,4,3,5]]
 rest = np.mean(means[:,[4,5]],1)
@@ -37,12 +50,27 @@ bar_colors2 = ["#c2d6a4","#97c684","#97c684","#97c684", "#6f9969"]
 categories = ['Task-repeat','Within-\ndomain', 'Between-\ndomain', 'Restart', 'Rest']
 r = np.arange(len(categories))
 # Create the bar plot with error bars and custom colors
-plt.bar(r,toplot[1,:], width=width, label='Core DMN',yerr=np.abs(errors_toplot[1,:]), capsize=2, color=bar_colors1, alpha=0.7, edgecolor='black')
+plt.bar(r,toplot[1,:], width=width, label='Core DMN',yerr=np.abs(errors_toplot[1,:]), capsize=2, color=bar_colors1, alpha=1, edgecolor='black')
 
-plt.bar(r+width, toplot[0,:], width=width, label='MTL DMN',yerr=np.abs(errors_toplot[0,:]), capsize=2, color=bar_colors2, alpha=0.7, edgecolor='black')
+for i in range(5):
+    plt.scatter([i]*len(allcore),allcore[:,i], color='grey',edgecolor='black',s=15,alpha=0.3,zorder=2)
+    #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
+    
+plt.errorbar(categories, toplot[1,:], yerr=np.abs(errors_toplot[1,:]), fmt='none',ecolor='black',capsize=4,capthick=1,zorder=3)
 
-plt.xlim([-0.55,5.55])
-plt.xticks(r+width,categories,fontsize=8)
+
+plt.bar(r+width, toplot[0,:], width=width, label='MTL DMN',yerr=np.abs(errors_toplot[0,:]), capsize=2, color=bar_colors2, alpha=1, edgecolor='black')
+for i in range(5):
+    plt.scatter([i+width]*len(allmtl),allmtl[:,i], color='grey',edgecolor='black',s=15,alpha=0.3,zorder=2)
+    #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
+    
+plt.errorbar(r+width, toplot[0,:], yerr=np.abs(errors_toplot[0,:]), fmt='none',ecolor='black',capsize=4,capthick=1,zorder=3)
+
+
+plt.ylim([-1,1.75])
+plt.xlim([-0.55,5])
+
+plt.xticks(r+width,categories,fontsize=12)
 plt.ylabel("Decoding accuracy for context (d')")
 plt.legend( loc='upper right', fontsize='large',frameon=False)
 
@@ -52,6 +80,8 @@ plt.tight_layout()
 
 dpi = 600
 fig1=plt.gcf()
+fig1.set_size_inches(6,6) 
 #fig1.savefig('decode_context_mtl_core.jpg', dpi=dpi)
+plt.show()
 
 
