@@ -6,7 +6,7 @@ Scene memory recognition accuracy, figure 3
 @author: ashleyzhou
 """
 
-
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 data = pd.read_csv('recognition_accuracy.csv', header=None)
@@ -18,22 +18,26 @@ errors = errordata.values[0]
 allsubs=pd.read_csv('allsubs_rec_accuracy.csv', header=None)
 allsubs= allsubs.values
 
+#remove between subject variance
+allsubs=allsubs.T - [np.nanmean(allsubs, axis=1)]*5 + np.ones((5,34))*np.nanmean(allsubs)
+allsubs=allsubs.T
+
 # Custom bar colors for each bar
 bar_colors = ['pink','b', 'g', 'r', 'orange']
 bar_colors = ["#c2d6a4", "#669d62","#669d62", "#669d62", "#1f5b25"]
 
 # Create the bar plot with error bars and custom colors
-plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.7, edgecolor='black')
+plt.bar(categories, means, yerr=errors, capsize=2, color=bar_colors, alpha=0.8, edgecolor='black')
 
 for i in range(5):
-    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.6,zorder=2)
+    plt.scatter([i]*len(allsubs),allsubs[:,i], color='grey',edgecolor='black',alpha=0.3,zorder=2)
     #plt.scatter([i]*len(allsubs)+np.random.uniform(-0.05,0.05,len(allsubs)),allsubs[:,i], color='grey',edgecolor='black',alpha=0.5,zorder=2)
     
 plt.errorbar(categories, means, yerr=errors, fmt='none',ecolor='black',capsize=5,capthick=1,zorder=3)
 
 
 # Add labels and title
-plt.ylim([-1.25,2])
+plt.ylim([-1,1.5])
 #plt.xlabel('Condition')
 plt.ylabel("Scene Memory Recognition Accuracy (d')")
 #plt.title(')
