@@ -524,6 +524,7 @@ for num = 1:2
     F=tbl.F(3);x=tbl.DF(3);y=tbl.DF(3+1); % 
     BF10=rmANOVAbf_FB23(F,x,y);fprintf('BF=%.3e',BF10);
     decode_results.(conditions{num}).combined = mean(comb_sig);
+    decode_results.(conditions{num}).all =comb_sig;
     decode_results.(conditions{num}).combined_error = abs(CI-repmat(mean(comb_sig),2,1));
     
     %% Core and MTL decoding
@@ -535,7 +536,8 @@ for num = 1:2
     
     csvwrite([lower(conditions{num}) '_mtl_core_error.csv'],CI);
     csvwrite(['mtl_core_' lower(conditions{num}) '_decoding.csv'],squeeze(mean(anova_matrix(:,1:2,:)))); %2 roi x 6 condition
-    
+    csvwrite(['allsubs_mtl_core_' lower(conditions{num}) '_decoding.csv'],anova_matrix(:,1:2,:)); %2 roi x 6 condition
+
     comb_transitions = mean(anova_matrix(:,1:2,[2,3,5]),3);
     nanova=zeros(35,2,2);
     nanova(:,:,1)=squeeze(comb_transitions);
