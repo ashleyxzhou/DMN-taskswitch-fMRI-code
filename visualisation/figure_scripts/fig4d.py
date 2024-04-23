@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import json
 import numpy as np
 
-with open('../Downloads/yeoDecodingResults.json', 'r') as json_file:
+with open('yeoDecodingResults.json', 'r') as json_file:
     data = json.load(json_file)
     
 #categories = ['Task-repeat','Within-\ndomain', 'Between-\ndomain', 'Restart', 'Rest']
