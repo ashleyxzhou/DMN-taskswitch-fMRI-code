@@ -19,15 +19,19 @@ errors = errordata.values
 allsubs=pd.read_csv('allsubs_mtl_core_context_decoding.csv', header=None)
 allsubs=allsubs.values
 
-allmtl=allsubs[:,0:6]
+allmtl=allsubs[:,[0,2,4,6,8,10]]
 #remove between subject variance
 allmtl=allmtl.T - [np.nanmean(allmtl, axis=1)]*6 + np.ones((6,35))*np.nanmean(allmtl)
 allmtl=allmtl.T
+allmtl=allmtl[:,[0,1,2,4,3,5]]
+allmtl[:,4]=np.mean(allmtl[:,4:6],1).tolist()
 
-allcore=allsubs[:,6:12]
+allcore=allsubs[:,[1,3,5,7,9,11]]
 #remove between subject variance
 allcore=allcore.T - [np.nanmean(allcore, axis=1)]*6 + np.ones((6,35))*np.nanmean(allcore)
 allcore=allcore.T
+allcore=allcore[:,[0,1,2,4,3,5]]
+allcore[:,4]=np.mean(allcore[:,4:6],1).tolist()
 
 width = 0.3
 
@@ -67,7 +71,7 @@ for i in range(5):
 plt.errorbar(r+width, toplot[0,:], yerr=np.abs(errors_toplot[0,:]), fmt='none',ecolor='black',capsize=4,capthick=1,zorder=3)
 
 
-plt.ylim([-1,1.75])
+plt.ylim([-1,1.5])
 plt.xlim([-0.55,5])
 
 plt.xticks(r+width,categories,fontsize=12)
